@@ -16,7 +16,7 @@ var {
   ListView
 } = React;
 
-var helloworld = React.createClass({
+var MoviesView = React.createClass({
   getInitialState: function() {
     return {
       dataSource: new ListView.DataSource({
@@ -109,4 +109,5 @@ var styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('helloworld', () => helloworld);
+//AppRegistry.registerComponent('helloworld', () => helloworld);
+module.exports = MoviesView;
