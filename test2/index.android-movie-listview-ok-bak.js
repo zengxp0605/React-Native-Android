@@ -8,8 +8,7 @@ var {
   ListView,
   ScrollView,
   View,
-  StyleSheet,
-  PullToRefreshViewAndroid
+  StyleSheet
 } = React;
 
 // url 模板,每次替换页码
@@ -24,7 +23,6 @@ var MovieProject = React.createClass({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       loaded: false, // 设置标示位
-      isToTopRefreshing: false, // 
     };
   },  
   componentDidMount: function() {// 初始化页面后,第一次加载数据
@@ -47,7 +45,6 @@ var MovieProject = React.createClass({
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(globalArry),
           loaded: true, // 将标示位置为已加载
-          isToTopRefreshing: false, // 取消顶部正在加载图标
         });
       })
       .catch(e => console.error("Oops, error", e))
@@ -58,54 +55,20 @@ var MovieProject = React.createClass({
     }
 
     return (
-      <PullToRefreshViewAndroid
-        style={{flex: 1}}
-        refreshing={this.state.isToTopRefreshing}
-        onRefresh={this._onPullTopRefresh}
-        colors={['red', 'blue']}
-        progressBackgroundColor={'pink'}
-        >
-      
-            <ListView
-            initialListSize={30}
-            //pageSize = {10}
-            onChangeVisibleRows={()=>{console.log('--onChangeVisibleRows--')}}
-            onEndReached={this.loadNewPage} // 每次滚动到底部时,加载下一页数据
-            onEndReachedThreshold={50}
-            style={styles.listView}
-            dataSource={this.state.dataSource}
-            renderRow={(rowData) => <MovieView movie={rowData} />}
-            // renderSectionHeader = {this.renderSectionHeader}
-              readerHeader={()=><View style={{backgroundColor:'red',height:50}}><Text>Header</Text></View>}
-               readerFooter={()=><View style={{backgroundColor:'blue',height:50}}><Text>Footer</Text></View>}
-            />
-      </PullToRefreshViewAndroid>
+        <ListView
+        initialListSize={30}
+        //pageSize = {10}
+        onChangeVisibleRows={()=>{console.log('--onChangeVisibleRows--')}}
+        onEndReached={this.loadNewPage} // 每次滚动到底部时,加载下一页数据
+        onEndReachedThreshold={50}
+        style={styles.listView}
+        dataSource={this.state.dataSource}
+        renderRow={(rowData) => <MovieView movie={rowData} />}
+        // renderSectionHeader = {this.renderSectionHeader}
+          readerHeader={()=><View style={{backgroundColor:'red',height:50}}><Text>Header</Text></View>}
+           readerFooter={()=><View style={{backgroundColor:'blue',height:50}}><Text>Footer</Text></View>}
+        />
       );
-  },
-  _onPullTopRefresh() {
-    console.info('--_onPullTopRefresh--');
-    globalArry = [];
-    PAGE = 1;
-    this.loadNewPage();
-    this.setState({
-      isToTopRefreshing: true,
-      // dataSource: this.state.dataSource.cloneWithRows(),
-    });
-    // setTimeout(() => {
-    //   // prepend 10 items
-    //   const rowData = Array.from(new Array(10))
-    //   .map((val, i) => ({
-    //     text: 'Loaded row' + (+this.state.loaded + i),
-    //     clicks: 0,
-    //   }))
-    //   .concat(this.state.rowData);
-    //   console.log(rowData);
-    //   this.setState({
-    //     loaded: this.state.loaded + 10,
-    //     isRefreshing: false,
-    //     rowData: rowData,
-    //   });
-    // }, 2000);
   },
   renderLoadingView: function() {
     return (
