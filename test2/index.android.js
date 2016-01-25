@@ -73,7 +73,6 @@ var MovieProject = React.createClass({
         progressBackgroundColor={'pink'}
 
         >
-      
             <ListView
             initialListSize={30}
             //pageSize = {10}
@@ -114,21 +113,6 @@ var MovieProject = React.createClass({
       isToTopRefreshing: true,
       // dataSource: this.state.dataSource.cloneWithRows(),
     });
-    // setTimeout(() => {
-    //   // prepend 10 items
-    //   const rowData = Array.from(new Array(10))
-    //   .map((val, i) => ({
-    //     text: 'Loaded row' + (+this.state.loaded + i),
-    //     clicks: 0,
-    //   }))
-    //   .concat(this.state.rowData);
-    //   console.log(rowData);
-    //   this.setState({
-    //     loaded: this.state.loaded + 10,
-    //     isRefreshing: false,
-    //     rowData: rowData,
-    //   });
-    // }, 2000);
   },
   renderLoadingView: function() {
   	return (
