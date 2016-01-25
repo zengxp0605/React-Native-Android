@@ -111,7 +111,6 @@ var MovieProject = React.createClass({
     this.loadNewPage();
     this.setState({
       isToTopRefreshing: true,
-      // dataSource: this.state.dataSource.cloneWithRows(),
     });
   },
   renderLoadingView: function() {
