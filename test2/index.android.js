@@ -9,7 +9,9 @@ var {
   ScrollView,
   View,
   StyleSheet,
-  PullToRefreshViewAndroid
+  PullToRefreshViewAndroid,
+  ProgressBarAndroid,
+  TouchableOpacity,
 } = React;
 
 // url 模板,每次替换页码
@@ -17,6 +19,7 @@ var REQUEST_URL_TPL = 'https://raw.githubusercontent.com/zengxp0605/test/master/
 var PAGE = 1; // start page
 var globalArry = [];
 
+var HEAD_REF = "header";
 var MovieProject = React.createClass({
   getInitialState: function() {
     return {
@@ -25,9 +28,11 @@ var MovieProject = React.createClass({
       }),
       loaded: false, // 设置标示位
       isToTopRefreshing: false, // 
+      tmpHeaderBgColor:'rgba(0,0,0,0.2)',
     };
-  },  
+  },
   componentDidMount: function() {// 初始化页面后,第一次加载数据
+  	console.log('componentDidMount');
     this.loadNewPage();
   },
   loadNewPage:function(){
@@ -58,29 +63,46 @@ var MovieProject = React.createClass({
     }
 
     return (
+      <View style={{flex:1,paddingTop:50}} ref={HEAD_REF}>
+      	<Text ref="test" style={styles.row} children="test111"></Text>
       <PullToRefreshViewAndroid
         style={{flex: 1}}
         refreshing={this.state.isToTopRefreshing}
         onRefresh={this._onPullTopRefresh}
         colors={['red', 'blue']}
         progressBackgroundColor={'pink'}
+
         >
-      
             <ListView
             initialListSize={30}
             //pageSize = {10}
             onChangeVisibleRows={()=>{console.log('--onChangeVisibleRows--')}}
             onEndReached={this.loadNewPage} // 每次滚动到底部时,加载下一页数据
-            onEndReachedThreshold={50}
+            onEndReachedThreshold={0}
             style={styles.listView}
             dataSource={this.state.dataSource}
             renderRow={(rowData) => <MovieView movie={rowData} />}
             // renderSectionHeader = {this.renderSectionHeader}
-              readerHeader={()=><View style={{backgroundColor:'red',height:50}}><Text>Header</Text></View>}
-               readerFooter={()=><View style={{backgroundColor:'blue',height:50}}><Text>Footer</Text></View>}
+              renderHeader={this.renderHeader}
+               renderFooter={()=><View style={{backgroundColor:'blue',height:50}}><Text>Footer</Text></View>}
             />
       </PullToRefreshViewAndroid>
+      </View>
       );
+  },
+  renderHeader(){
+  	return (
+	<View style={{backgroundColor:this.state.tmpHeaderBgColor,height:50,justifyContent:'center'}}>
+		<TouchableOpacity onPress={this._onPressHeader}>
+			<Text ref="test2">---Header---</Text>
+		</TouchableOpacity>
+	</View>
+	);
+  },
+  _onPressHeader(){
+  	this.refs[HEAD_REF].setNativeProps({style:{paddingTop:10}});
+  	this.refs["test"].setNativeProps({children:'ttttttttttttttttstt',style:{backgroundColor:'red'}});
+  	console.log('_onPressHeader',this.refs["test"],this.refs["test2"]);
   },
   _onPullTopRefresh() {
     console.info('--_onPullTopRefresh--');
@@ -89,32 +111,18 @@ var MovieProject = React.createClass({
     this.loadNewPage();
     this.setState({
       isToTopRefreshing: true,
-      // dataSource: this.state.dataSource.cloneWithRows(),
     });
-    // setTimeout(() => {
-    //   // prepend 10 items
-    //   const rowData = Array.from(new Array(10))
-    //   .map((val, i) => ({
-    //     text: 'Loaded row' + (+this.state.loaded + i),
-    //     clicks: 0,
-    //   }))
-    //   .concat(this.state.rowData);
-    //   console.log(rowData);
-    //   this.setState({
-    //     loaded: this.state.loaded + 10,
-    //     isRefreshing: false,
-    //     rowData: rowData,
-    //   });
-    // }, 2000);
   },
   renderLoadingView: function() {
-    return (
-      <View style={styles.container}>
-        <Text>
-          正在加载电影数据……
-        </Text>
+  	return (
+		<View style={styles.loadingContainer}>
+		        <ProgressBarAndroid 
+		          //style={{height: 40}}
+		          color="#337ab7"
+		          styleAttr="LargeInverse" //"Large" //"Inverse"
+		        />
       </View>
-    );
+  	);
   },
   renderSectionHeader(){
     return (
@@ -161,6 +169,12 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
     marginBottom:5,
+  },
+  loadingContainer:{
+	flex: 1,
+	justifyContent: 'center',
+	alignItems: 'center',
+	backgroundColor:'#ebf9ff',
   },
   rightContainer: {
     flex: 1,
